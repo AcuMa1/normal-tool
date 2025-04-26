@@ -1,6 +1,7 @@
 from scapy.all import *
 import random
 import time
+import threading
 
 def generate_random_ip():
     return '.'.join(str(random.randint(0, 255)) for _ in range(4))
@@ -25,4 +26,15 @@ def load_test():
     
     print("انتهى الاختبار!")
 
-load_test()
+def Range_Range():
+    threads = []
+    for i in range(70):
+        thread = threading.Thread(target=load_test)
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+
+while True:
+	Range_Range()
