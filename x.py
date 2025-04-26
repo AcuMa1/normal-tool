@@ -21,9 +21,9 @@ def load_test():
     target_port = generate_random_port()
     print(f"بدأ الاختبار: إرسال حزم بحجم 1 ميجا إلى {target_ip} على المنفذ {target_port}")
     
-    for i in range(10):
+    for i in range(100):
         send_syn_packet(target_ip, target_port)
-        time.sleep(0.2)
+        #time.sleep(0.2)
     
     print("انتهى الاختبار!")
 
