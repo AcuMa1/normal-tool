@@ -26,10 +26,10 @@ jobs:
            python-version: "3.x"
 
       - name: install
-        run: sudo pip install scapy
+        run: pip install requests
 
       - name: Start The Code
-        run: sudo python x.py & sudo python x.py & sudo python x.py &
+        run: python x.py &
       
       - name: keep alive
         id: check_runs
