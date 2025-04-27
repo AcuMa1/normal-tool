@@ -33,7 +33,7 @@ def rangeLogin():
         thread = threading.Thread(target=GenLogin)
         threads.append(thread)
         thread.start()
-        time.sleep(random.uniform(0.5, 1.5))
+        time.sleep(random.uniform(2, 4))
 
     for thread in threads:
         thread.join()
