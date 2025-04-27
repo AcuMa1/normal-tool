@@ -23,7 +23,7 @@ def GenLogin():
     }
     data = {
         'email': generate_random_string(13) + "@gmail.com",
-        'password': generate_random_string(10),
+        'password': fk,
         "turnstileToken": fk
     }
 
@@ -31,4 +31,18 @@ def GenLogin():
     print(response)
     print(response.text)
 
-GenLogin()
+def rangeLogin():
+    threads = []
+    for i in range(random.randint(1, 10)):
+        thread = threading.Thread(target=GenLogin)
+        threads.append(thread)
+        thread.start()
+        time.sleep(random.uniform(0.5, 1.5))
+
+    for thread in threads:
+        thread.join()
+
+
+while True:
+	rangeLogin()
+
