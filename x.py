@@ -9,7 +9,7 @@ url = "https://backend.kibomodz.online/"
 def send_request():
     try:
         response = requests.get(url, verify=False)
-        print(f"Request sent to {url} - Status code: {response.status_code}")
+        print(f"Request sent to {url} - Status code: {response.text}")
     except requests.exceptions.RequestException as e:
         print(f"Error: {e}")
 
