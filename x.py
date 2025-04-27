@@ -3,6 +3,9 @@ import threading
 import random
 import string
 import time
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def generate_random_string(length):
     letters_and_digits = string.ascii_letters + string.digits
@@ -24,7 +27,7 @@ def GenLogin():
         "turnstileToken": fk
     }
 
-    response = requests.post(url, headers=headers, json=data)
+    response = requests.post(url, headers=headers, json=data, verify=False)
     print(response)
 
 GenLogin()
