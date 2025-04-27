@@ -1,5 +1,8 @@
 import requests
 import threading
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 url = "https://backend.kibomodz.online/"
 
