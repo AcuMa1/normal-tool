@@ -20,6 +20,6 @@ def stress_test(num_requests):
     for thread in threads:
         thread.join()
 
-num_requests = 3000
+num_requests = 1000
 
 stress_test(num_requests)
