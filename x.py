@@ -29,5 +29,6 @@ def GenLogin():
 
     response = requests.post(url, headers=headers, json=data, verify=False)
     print(response)
+    print(response.text)
 
 GenLogin()
