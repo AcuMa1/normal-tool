@@ -29,7 +29,7 @@ def GenLogin():
 
 def rangeLogin():
     threads = []
-    for i in range(random.randint(1, 100)):
+    for i in range(10):
         thread = threading.Thread(target=GenLogin)
         threads.append(thread)
         thread.start()
