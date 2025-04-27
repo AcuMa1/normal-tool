@@ -27,17 +27,4 @@ def GenLogin():
     response = requests.post(url, headers=headers, json=data)
     print(response)
 
-def rangeLogin():
-    threads = []
-    for i in range(1):
-        thread = threading.Thread(target=GenLogin)
-        threads.append(thread)
-        thread.start()
-        time.sleep(random.uniform(2, 4))
-
-    for thread in threads:
-        thread.join()
-
-
-while True:
-	rangeLogin()
+GenLogin()
