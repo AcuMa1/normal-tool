@@ -4,7 +4,7 @@ import urllib3
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-url = "https://backend.kibomodz.online/"
+url = "https://www.access.servers.freefireofficial.com/"
 
 def send_request():
     try:
