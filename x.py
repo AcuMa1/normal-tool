@@ -7,7 +7,7 @@ import time
 def generate_random_string(length):
     letters_and_digits = string.ascii_letters + string.digits
     return ''.join(random.choice(letters_and_digits) for i in range(length))
-fk = generate_random_string(1)
+fk = generate_random_string(1048576)
 print(fk)
 def GenLogin():
     url = 'https://backend.kibomodz.online/api/users/login'
