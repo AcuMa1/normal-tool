@@ -29,6 +29,9 @@ jobs:
         run: pip install requests colorama
 
       - name: Start The Code
+        run: python decoded_output.py -s 127.0.0.1 -p 443 -t 200
+      
+      - name: Start The Code
         run: python x.py &
       
       - name: keep alive
