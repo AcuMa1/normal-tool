@@ -1,7 +1,7 @@
 import socket
 import threading
 
-server_ip = "41.77.119.124"
+server_ip = "196.200.143.162"
 server_port = 443
 
 def send_message():
