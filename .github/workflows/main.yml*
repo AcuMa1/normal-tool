@@ -1,4 +1,4 @@
-name: Extract curl headers
+name: Extract curl headers and create zip
 
 on:
   push:
@@ -14,10 +14,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install curl to download source
+      - name: Install curl and zip tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y curl
+          sudo apt-get install -y curl zip
 
       - name: Download curl source
         run: |
@@ -29,12 +29,16 @@ jobs:
           sudo mkdir -p include
           sudo cp -r curl-8.13.0/include/curl include/
 
+      - name: Create zip file for curl headers
+        run: |
+          sudo zip -r curl.zip include/curl
+
       - name: Configure git for commit
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'action@github.com'
           git add -A
-          git diff-index --quiet HEAD || (git commit -a -m "Added curl headers to include/" --allow-empty)
+          git diff-index --quiet HEAD || (git commit -a -m "Added curl headers in curl.zip" --allow-empty)
 
       - name: Pull latest changes
         run: |
