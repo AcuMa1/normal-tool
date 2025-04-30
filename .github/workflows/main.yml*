@@ -1,0 +1,95 @@
+name: Build libcurl for Android and Push
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y build-essential unzip cmake autoconf automake libtool curl
+
+    - name: Download curl source
+      run: |
+        curl -LO https://github.com/curl/curl/releases/download/curl-8_13_0/curl-8.13.0.tar.gz
+        tar -xzf curl-8.13.0.tar.gz
+        mv curl-8.13.0 curl
+
+    - name: Setup Android NDK
+      uses: nttld/setup-ndk@v1
+      with:
+        ndk-version: r25c
+        add-to-path: true
+
+    - name: Build libcurl for all ABIs
+      run: |
+        ABIS=("armeabi-v7a" "arm64-v8a" "x86" "x86_64")
+        TARGETS=("armv7a-linux-androideabi" "aarch64-linux-android" "i686-linux-android" "x86_64-linux-android")
+        API=21
+
+        mkdir -p aide/curl/include
+        mkdir -p aide/curl/lib
+
+        for i in "${!ABIS[@]}"; do
+          ABI=${ABIS[$i]}
+          TARGET=${TARGETS[$i]}
+          echo "Building for $ABI"
+
+          rm -rf build
+          cp -r curl build_src
+          mv build_src build
+          cd build
+
+          ./buildconf || true
+
+          export TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
+          export CC=$TOOLCHAIN/bin/${TARGET}${API}-clang
+          export AR=$TOOLCHAIN/bin/llvm-ar
+          export RANLIB=$TOOLCHAIN/bin/llvm-ranlib
+          export STRIP=$TOOLCHAIN/bin/llvm-strip
+
+          ./configure \
+            --host=${TARGET} \
+            --with-pic \
+            --disable-shared \
+            --enable-static \
+            --without-ssl \
+            --disable-ldap \
+            --prefix=$GITHUB_WORKSPACE/build_out/$ABI
+
+          make -j$(nproc)
+          make install
+          cd ..
+
+          mkdir -p aide/curl/lib/$ABI
+          cp -r build_out/$ABI/include/curl aide/curl/include/
+          cp build_out/$ABI/lib/libcurl.a aide/curl/lib/$ABI/
+        done
+
+        cd aide
+        zip -r libcurl-aide.zip curl
+
+    - name: Delete cache and commit logs
+      run: |
+        git config --global user.name 'GitHub Actions'
+        git config --global user.email 'action@github.com'
+        git add -A
+        git diff-index --quiet HEAD || (git commit -a -m "out session update" --allow-empty)
+
+    - name: Pull with rebase
+      run: |
+        git pull origin main --rebase
+        git push origin main
+
+    - name: Push changes
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: main
